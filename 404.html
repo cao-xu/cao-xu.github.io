@@ -14,7 +14,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
   <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
-  <link rel="alternate" href="/atom.xml" title="caoxu's Blog" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="CaoXu's Blog" type="application/atom+xml">
 
 <link rel="stylesheet" href="/css/main.css?v=7.4.1">
 
@@ -31,7 +31,7 @@
     exturl: false,
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
     copycode: {"enable":true,"show_result":true,"style":"flat"},
-    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
     bookmark: {"enable":true,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
@@ -44,8 +44,8 @@
       hits: {"per_page":10},
       labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     },
-    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
-    path: '',
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     translation: {
       copy_button: '复制',
@@ -56,21 +56,18 @@
   };
 </script>
 
-  <meta name="description" content="文章描述，即要在首页显示的摘要（仅部分主题支持）">
-<meta name="keywords" content="文章标签一,文章标签二">
-<meta property="og:type" content="article">
-<meta property="og:title" content="文章名称">
-<meta property="og:url" content="http://yoursite.com/2019/10/12/test/index.html">
-<meta property="og:site_name" content="caoxu&#39;s Blog">
-<meta property="og:description" content="文章描述，即要在首页显示的摘要（仅部分主题支持）">
+  <meta name="description" content="对不起，您所访问的页面不存在或者已删除。 您可以点击此处返回首页        CaoXu">
+<meta property="og:type" content="website">
+<meta property="og:title" content="404 Not Found">
+<meta property="og:url" content="http://yoursite.com/404.html">
+<meta property="og:site_name" content="CaoXu&#39;s Blog">
+<meta property="og:description" content="对不起，您所访问的页面不存在或者已删除。 您可以点击此处返回首页        CaoXu">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2019/10/12/test/文章封面图（仅部分主题支持）">
-<meta property="og:updated_time" content="2019-10-12T14:34:17.472Z">
+<meta property="og:updated_time" content="2019-10-13T08:20:45.359Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="文章名称">
-<meta name="twitter:description" content="文章描述，即要在首页显示的摘要（仅部分主题支持）">
-<meta name="twitter:image" content="http://yoursite.com/2019/10/12/test/文章封面图（仅部分主题支持）">
-  <link rel="canonical" href="http://yoursite.com/2019/10/12/test/">
+<meta name="twitter:title" content="404 Not Found">
+<meta name="twitter:description" content="对不起，您所访问的页面不存在或者已删除。 您可以点击此处返回首页        CaoXu">
+  <link rel="canonical" href="http://yoursite.com/404">
 
 
 <script id="page-configurations">
@@ -78,13 +75,16 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: true,
-    isPage: false,
+    isPost: false,
+    isPage: true,
     isArchive: false
   };
 </script>
 
-  <title>文章名称 | caoxu's Blog</title>
+  <title>
+      404 Not Found | CaoXu's Blog
+    
+  </title>
   
 
 
@@ -130,11 +130,11 @@
     <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">caoxu's Blog</span>
+        <span class="site-title">CaoXu's Blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">成长记录</p>
+        <p class="site-subtitle">想法、创意与实践</p>
       
   </div>
 
@@ -168,6 +168,32 @@
       
         
         
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
         <li class="menu-item menu-item-archives">
       
     
@@ -177,9 +203,39 @@
   </li>
       
     
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>
+        
+        搜索
+        </a>
+      </li>
+    
   </ul>
 
 </nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
 </div>
     </header>
 
@@ -199,140 +255,66 @@
         <div class="content-wrap">
             
 
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+
           <div class="content">
             
 
   <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/test/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CaoXu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="caoxu's Blog">
-    </span>
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            文章名称
-            
 
-          
-        </h1>
+<h1 class="post-title" itemprop="name headline">404 Not Found
+  
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+</h1>
 
-              
-                
-              
+<div class="post-meta">
+  
 
-              <time title="创建时间：2019-10-12 22:35:04 / 修改时间：22:34:17" itemprop="dateCreated datePublished" datetime="2019-10-12T22:35:04+08:00">2019-10-12</time>
-            </span>
-          
-            
+</div>
 
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/文章分类/" itemprop="url" rel="index">
-                    <span itemprop="name">文章分类</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            <div class="post-description">文章描述，即要在首页显示的摘要（仅部分主题支持）</div>
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+</header>
 
       
-        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
-            <div class="post-gallery-row">
-              <img src="/文章封面图（仅部分主题支持）" itemprop="contentUrl">
-            
-          
+      
+      
+      <div class="post-body">
+          <center>
+对不起，您所访问的页面不存在或者已删除。
+您可以<a href="https://cao-xu.github.io>" target="_blank" rel="noopener">点击此处</a>返回首页
+</center>
 
-          </div>
-        </div>
-        <p>这里是正文</p>
-<p>注意：description 和 <a id="more"></a> 方式显示摘要二选一即可，部分主题不支持description，每个配置英文冒号后面要空一格，不同主题配置有所差异，具体要参考主题文档</p>
-
+<blockquote class="blockquote-center">
+    CaoXu
+</blockquote>
+        
+      </div>
+      
+      
+      
     </div>
+    
 
     
     
     
-        
-      
-
-      <footer class="post-footer">
-          
-            
-          
-          <div class="post-tags">
-            
-              <a href="/tags/文章标签一/" rel="tag"># 文章标签一</a>
-            
-              <a href="/tags/文章标签二/" rel="tag"># 文章标签二</a>
-            
-          </div>
-        
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-next post-nav-item">
-              
-                <a href="/2019/10/12/hello-world/" rel="next" title="Hello World">
-                  <i class="fa fa-chevron-left"></i> Hello World
-                </a>
-              
-            </div>
-
-            <span class="post-nav-divider"></span>
-
-            <div class="post-nav-prev post-nav-item">
-              
-            </div>
-          </div>
-        
-      </footer>
-    
-  </article>
-  
-  
-  
-
   </div>
 
 
@@ -375,8 +357,11 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/android-chrome-512x512.png"
+      alt="CaoXu">
   <p class="site-author-name" itemprop="name">CaoXu</p>
-  <div class="site-description" itemprop="description"></div>
+  <div class="site-description" itemprop="description">记录在技术学习道路上的点点滴滴，分享有趣的项目经验</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -384,27 +369,9 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">1</span>
           <span class="site-state-item-name">日志</span>
         </a>
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-categories">
-        
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">分类</span>
-        
-      </div>
-    
-      
-      
-      <div class="site-state-item site-state-tags">
-        
-        <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">标签</span>
-        
       </div>
     
   </nav>
@@ -543,6 +510,8 @@ window.addEventListener('pjax:success', () => {
 
 
 
+  <script src="/js/local-search.js?v=7.4.1"></script>
+
 
 
 
@@ -575,7 +544,7 @@ window.addEventListener('pjax:success', () => {
       repo: 'cao-xu.github.io',
       owner: 'cao-xu',
       admin: ['cao-xu'],
-      id: '827eeb21abbc453fb728fa98b7632334',
+      id: '516a35d265e49707e113184afbcbb8c8',
         language: 'zh-CN',
       
       distractionFreeMode: 'true'
