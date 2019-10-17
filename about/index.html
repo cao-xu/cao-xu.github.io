@@ -59,17 +59,17 @@
   };
 </script>
 
-  <meta name="description" content="我 大家好，我是练习时长两个月的程序猿 喜欢，说、学、逗、唱 坐标：上海  本站 github+hexo+next主题 喜欢本站请收藏~  交换友链请在该页面下留言">
+  <meta name="description" content="我 大家好，我是练习时长两个月的程序猿 喜欢，说、学、逗、唱 坐标：上海  本站 github+hexo+next主题 喜欢本站请收藏~  交换友链请在该页面下留言         document.querySelectorAll(&apos;.github-emoji&apos;)           .forEach(el =&amp;gt; {             if (!el.dataset.src) { retu">
 <meta property="og:type" content="website">
 <meta property="og:title" content="关于我">
 <meta property="og:url" content="http://www.caoxu.club/about/index.html">
 <meta property="og:site_name" content="CaoXu&#39;s Blog">
-<meta property="og:description" content="我 大家好，我是练习时长两个月的程序猿 喜欢，说、学、逗、唱 坐标：上海  本站 github+hexo+next主题 喜欢本站请收藏~  交换友链请在该页面下留言">
+<meta property="og:description" content="我 大家好，我是练习时长两个月的程序猿 喜欢，说、学、逗、唱 坐标：上海  本站 github+hexo+next主题 喜欢本站请收藏~  交换友链请在该页面下留言         document.querySelectorAll(&apos;.github-emoji&apos;)           .forEach(el =&amp;gt; {             if (!el.dataset.src) { retu">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-10-14T13:34:25.994Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于我">
-<meta name="twitter:description" content="我 大家好，我是练习时长两个月的程序猿 喜欢，说、学、逗、唱 坐标：上海  本站 github+hexo+next主题 喜欢本站请收藏~  交换友链请在该页面下留言">
+<meta name="twitter:description" content="我 大家好，我是练习时长两个月的程序猿 喜欢，说、学、逗、唱 坐标：上海  本站 github+hexo+next主题 喜欢本站请收藏~  交换友链请在该页面下留言         document.querySelectorAll(&apos;.github-emoji&apos;)           .forEach(el =&amp;gt; {             if (!el.dataset.src) { retu">
   <link rel="canonical" href="http://www.caoxu.club/about/">
 
 
@@ -357,7 +357,25 @@
 <li>github+hexo+next主题</li>
 <li>喜欢本站请收藏~</li>
 </ul>
-<h3 id="交换友链请在该页面下留言"><a href="#交换友链请在该页面下留言" class="headerlink" title="交换友链请在该页面下留言"></a>交换友链请在该页面下留言</h3>
+<h3 id="交换友链请在该页面下留言"><a href="#交换友链请在该页面下留言" class="headerlink" title="交换友链请在该页面下留言"></a>交换友链请在该页面下留言</h3><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
         
       </div>
       
@@ -725,19 +743,6 @@ window.addEventListener('pjax:success', () => {
 
   
 
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
-  <script>
-      pbOptions = {};
-        pbOptions.iconStyle = "box";
-      
-        pbOptions.boxForm = "horizontal";
-      
-        pbOptions.position = "bottomCenter";
-      
-        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
-      
-      new needShareButton('#needsharebutton-postbottom', pbOptions);
-  </script>
 <script>
   window.livereOptions = {
     refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
@@ -752,5 +757,18 @@ window.addEventListener('pjax:success', () => {
   })(document, 'script');
 </script>
 
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+      
+        pbOptions.boxForm = "horizontal";
+      
+        pbOptions.position = "bottomCenter";
+      
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+  </script>
     </div>
 <script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
