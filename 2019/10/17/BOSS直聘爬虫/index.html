@@ -67,7 +67,7 @@
 <meta property="og:site_name" content="CaoXu&#39;s Blog">
 <meta property="og:description" content="这是我个人博客的第一篇文章，是全新的开始。希望未来在这里记录更多有趣的探索。    自动驾驶随着人工智能技术的成熟，人才需求在不断增加，为了对我国自动驾驶人才需求进行了解，本文选择BOSS直聘招聘网站获取自动驾驶相关职位信息，分析数据，根据分析结果确定人才需求、为以后的学习制定计划。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-17T12:51:33.065Z">
+<meta property="og:updated_time" content="2019-10-17T13:41:40.890Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BOSS直聘“自动驾驶”岗位信息爬取与分析">
 <meta name="twitter:description" content="这是我个人博客的第一篇文章，是全新的开始。希望未来在这里记录更多有趣的探索。    自动驾驶随着人工智能技术的成熟，人才需求在不断增加，为了对我国自动驾驶人才需求进行了解，本文选择BOSS直聘招聘网站获取自动驾驶相关职位信息，分析数据，根据分析结果确定人才需求、为以后的学习制定计划。">
@@ -341,7 +341,7 @@
                 
               
 
-              <time title="创建时间：2019-10-17 15:40:49 / 修改时间：20:51:33" itemprop="dateCreated datePublished" datetime="2019-10-17T15:40:49+08:00">2019-10-17</time>
+              <time title="创建时间：2019-10-17 15:40:49 / 修改时间：21:41:40" itemprop="dateCreated datePublished" datetime="2019-10-17T15:40:49+08:00">2019-10-17</time>
             </span>
           
             
@@ -419,7 +419,7 @@
       
         <p>  这是我个人博客的第一篇文章，是全新的开始。希望未来在这里记录更多有趣的探索。</p>
 <img title="自动驾驶岗位名称" data-src="/2019/10/17/BOSS直聘爬虫/岗位名称.jpg">
-<p>  自动驾驶随着人工智能技术的成熟，人才需求在不断增加，为了对我国自动驾驶人才需求进行了解，本文选择<a href="www.zhipin.com">BOSS直聘</a>招聘网站获取自动驾驶相关职位信息，分析数据，根据分析结果确定人才需求、为以后的学习制定计划。<br><a id="more"></a></p>
+<p>  自动驾驶随着人工智能技术的成熟，人才需求在不断增加，为了对我国自动驾驶人才需求进行了解，本文选择<span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpcGluLmNvbQ==" title="https://www.zhipin.com">BOSS直聘<i class="fa fa-external-link"></i></span>招聘网站获取自动驾驶相关职位信息，分析数据，根据分析结果确定人才需求、为以后的学习制定计划。<br><a id="more"></a></p>
 <p>本文开发环境：<span class="exturl" data-url="aHR0cHM6Ly93d3cucHl0aG9uLm9yZw==" title="https://www.python.org">python3.7<i class="fa fa-external-link"></i></span> 、<span class="exturl" data-url="aHR0cHM6Ly93d3cuYW5hY29uZGEuY29t" title="https://www.anaconda.com">anconda3<i class="fa fa-external-link"></i></span></p>
 <h2 id="一、数据爬取"><a href="#一、数据爬取" class="headerlink" title="一、数据爬取"></a>一、数据爬取</h2><h3 id="1-1-分析目标页，构造URL"><a href="#1-1-分析目标页，构造URL" class="headerlink" title="1.1 分析目标页，构造URL"></a>1.1 分析目标页，构造URL</h3><p>  首先，进入网站输入关键字“自动驾驶”查询得到职位的列表页面，对目标页面的URL分析<code>https://www.zhipin.com/c101010100/?query=自动驾驶&amp;page=1&amp;ka=page-1</code>，发现关键的字段有：<code>query</code>、<code>page</code>分别代表了要查询的<strong>关键字</strong>和<strong>页面</strong>，<code>c101010100</code>代表了城市的编号，当选择了<strong>全国</strong>时编号为<code>c101010100</code>，所以通过控制这三个参数，实现对全国所有职位列表页的信息的爬取。</p>
 <img title="目标页面" data-src="/2019/10/17/BOSS直聘爬虫/图1-1目标页面.png">
