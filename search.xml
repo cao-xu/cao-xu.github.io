@@ -6,7 +6,7 @@
     <content><![CDATA[<blockquote class="blockquote-center"><p><em>所有的模型都是错的，但是有用 <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f31f.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f31f.png?v8">🌟</span></em></p>
 </blockquote>
 <img title="拟合ROC" data-src="/2019/11/07/逻辑回归模型/拟合ROC.png">
-<p>本介绍如何建立逻辑回归模型进行交通事故预测，并验证了模型的准确度。<br><a id="more"></a></p>
+<p>本文介绍如何建立逻辑回归模型进行交通事故预测，并验证了模型的准确度。<br><a id="more"></a></p>
 <div class="note default">
             <h2 id="一、问题描述与数据准备"><a href="#一、问题描述与数据准备" class="headerlink" title="一、问题描述与数据准备"></a>一、问题描述与数据准备</h2>
           </div>
