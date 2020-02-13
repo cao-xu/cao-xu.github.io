@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+  <link rel="alternate" href="/atom.xml" title="CaoXu's Blog" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="baidu-site-verification" content="cwgyC92bKt">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.1',
+    exturl: true,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"manual"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="武汉加油！中国加油！  2020年第一篇博客，首先来填坑。本项目搭建了Wi-Fi检测信息分析网站，介绍了基于Wi-Fi信号检测的公交OD估计方法。这是本科两个毕设（软件工程+交通工程）的结合。">
+<meta name="keywords" content="Wi-Fi检测,OD矩阵估计,极大似然估计法,JSP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Wi-Fi数据的公交 Trip-level OD矩阵估计">
+<meta property="og:url" content="http://www.caoxu.club/2020/02/12/WiFi-detect-OD-estimation/index.html">
+<meta property="og:site_name" content="CaoXu&#39;s Blog">
+<meta property="og:description" content="武汉加油！中国加油！  2020年第一篇博客，首先来填坑。本项目搭建了Wi-Fi检测信息分析网站，介绍了基于Wi-Fi信号检测的公交OD估计方法。这是本科两个毕设（软件工程+交通工程）的结合。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-13T08:27:08.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于Wi-Fi数据的公交 Trip-level OD矩阵估计">
+<meta name="twitter:description" content="武汉加油！中国加油！  2020年第一篇博客，首先来填坑。本项目搭建了Wi-Fi检测信息分析网站，介绍了基于Wi-Fi信号检测的公交OD估计方法。这是本科两个毕设（软件工程+交通工程）的结合。">
+  <link rel="canonical" href="http://www.caoxu.club/2020/02/12/WiFi-detect-OD-estimation/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style>
+  <title>基于Wi-Fi数据的公交 Trip-level OD矩阵估计 | CaoXu's Blog</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149899840-1"></script>
+    <script pjax>
+      var host = window.location.hostname;
+      if (host !== "localhost" || !true) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-149899840-1');
+      }
+    </script>
+  
+
+
+  <script pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?9a64574f94b7d9fe418e05e7e891ef74";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CaoXu's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">想法、创意与实践</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      
+    
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>
+        
+        搜索
+        </a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Nhby14dQ==" title="cao-xu GitHub" aria-label="cao-xu GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.caoxu.club/2020/02/12/WiFi-detect-OD-estimation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CaoXu">
+      <meta itemprop="description" content="记录在技术学习道路上的点点滴滴，分享有趣的项目经验">
+      <meta itemprop="image" content="/images/android-chrome-512x512.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CaoXu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            基于Wi-Fi数据的公交 Trip-level OD矩阵估计
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-02-12 13:03:51" itemprop="dateCreated datePublished" datetime="2020-02-12T13:03:51+08:00">2020-02-12</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-13 16:27:08" itemprop="dateModified" datetime="2020-02-13T16:27:08+08:00">2020-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/本科毕设/" itemprop="url" rel="index">
+                    <span itemprop="name">本科毕设</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>25k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>22 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote class="blockquote-center"><p><em>武汉加油！中国加油！</em></p>
+</blockquote>
+<p>2020年第一篇博客，首先来填坑。本项目搭建了Wi-Fi检测信息分析网站，介绍了基于Wi-Fi信号检测的公交OD估计方法。这是本科两个毕设（软件工程+交通工程）的结合。<br><a id="more"></a></p>
+<div class="note default">
+            <h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2>
+          </div>
+<p>Origin-destination (OD) data of bus passenger flow is useful for improving the bus service. The OD matrix contains information about where passenger board and alight the bus. It can be used to design a new bus route, new stations, change the route structure, improve vehicle scheduling and driver scheduling (<em>1</em>). Currently, passenger demand information can be obtained through Automatic Passenger Counter (APC) systems (<em>2</em>), Automatic Fare Collection (AFC) systems (<em>3</em>). But those data may only be used to find the origin of passengers and not their destinations, and ride time. According to the <span class="exturl" data-url="aHR0cHM6Ly93d3cuY2lzY28uY29tL2MvZW4vdXMvc29sdXRpb25zL2NvbGxhdGVyYWwvc2VydmljZS1wcm92aWRlci92aXN1YWwtbmV0d29ya2luZy1pbmRleC12bmkvd2hpdGUtcGFwZXItYzExLTc0MTQ5MC5odG1s" title="https://www.cisco.com/c/en/us/solutions/collateral/service-provider/visual-networking-index-vni/white-paper-c11-741490.html">Cisco Visual Networking Index: Forecast and Trends, 2017-2022 White Paper<i class="fa fa-external-link"></i></span> predicts that in 2020, more than 53% of IP traffic in the global market will come from Wi-Fi devices. In addition, the report predicts that the number of Wi-Fi access points worldwide will increase year by year, from 64.2 million in 2015 to 432.5 million in 2020 (<em>4</em>). With the popularity of smart mobile communication devices, passengers will carry mobile devices with them during the trip. Mobile devices such as smartphones, tablets, and laptops constantly emit Wi-Fi signals. These signals can be distinguished by the device’s unique Media Access Control (MAC) address. Note that every MAC address is unique to its device. It is possible to obtain an OD matrix by detecting these device’s MAC addresses.</p>
+<p>Recently, a large number of studies have been conducted to obtain Bus passenger flow data based on Wi-Fi signals. For collecting Wi-Fi signals data of mobile devices, a Wi-Fi detection system needs to be built, Mikkelsen et al. (<em>5</em>) proposed a rapid prototype of the detection system using a Raspberry Pi and a Wi-Fi network card. As the detected Wi-Fi signals may come from devices outside the bus, classifying them as originating from passenger or non-passenger devices is necessary (<em>5;6;7</em>). Oransirikul et al. (<em>7</em>) proposes a real-time filtering mechanism with received signal strength indication (RSSI) as the filtering parameter, with an accuracy rate of 75%. Some studies use detection data to estimate passenger board and alight stop, and then generate an OD matrix for Wi-Fi devices (<em>3;8</em>). In addition, the algorithms that estimated the actual OD flow matrix based on the Wi-Fi device OD matrix have been proposed (<em>8;9</em>). Ji et al. (<em>8</em>) propose a hierarchical Bayesian model to estimate trip-level OD flow matrices using sampled OD flow data and boarding data provided by fareboxes.</p>
+<p>The objective of this paper is to estimate the trip-level OD matrix by detecting Wi-Fi data in the bus combined with passenger boarding and alighting counts. The contributions of this work are as follows:</p>
+<p>(1) Design a Maximum Likelihood Estimator (MLE) method to estimate the actual trip-level OD matrices. </p>
+<p>(2) Propose an arrival time matching method to infer the OD matrices of Wi-Fi devices.</p>
+<p>(3) Developed <span class="exturl" data-url="aHR0cDovL3d3dy5kanR1YnVzdG9vbC5jb20=" title="http://www.djtubustool.com">djtubustool<i class="fa fa-external-link"></i></span> website for Wi-Fi signals data collection, storage, and computation.</p>
+<p>The remainder of this paper is organized as follows: Section 2 presents the data collection system, including Wi-Fi sensors, detection data analysis website. Section 3 introduces Methodologies, including detection data filtering methods, Wi-Fi device OD matrices and actual OD matrices estimation methods, and performance metrics. Section 4 introduces the process of empirical evaluation and analyzes its results. Section 5 presents the conclusions and proposes future work.</p>
+<div class="note default">
+            <h2 id="2-Data-collection-system"><a href="#2-Data-collection-system" class="headerlink" title="2. Data collection system"></a>2. Data collection system</h2>
+          </div>
+<h3 id="2-1-System-design"><a href="#2-1-System-design" class="headerlink" title="2.1 System design"></a>2.1 System design</h3><p>The data collection system is divided into two parts, including the hardware system and the data analysis website. The hardware system is responsible for collecting and uploading Wi-Fi data on the bus. After the Wi-Fi sensor completes data collection, this paper develops a <span class="exturl" data-url="aHR0cDovL3d3dy5kanR1YnVzdG9vbC5jb20=" title="http://www.djtubustool.com">data analysis website<i class="fa fa-external-link"></i></span>. This website provides efficient data storage, calculation, and display, as well as passenger boarding and alighting counts of manual surveys. The architecture of the system is shown in Figure 1.</p>
+<img title="Overall architecture of the data collection system" data-src="/2020/02/12/WiFi-detect-OD-estimation/Overall%20architecture%20of%20the%20data%20collection%20system.png">
+<center>Figure 1  Overall architecture of the data collection system</center>
+
+<p>When the detect time reaches a fixed period, the Wi-Fi sensor will switch from the monitor mode to the connect mode and actively establish a connection with the previously set network. Wi-Fi sensors upload data and then switch to monitor mode after the transmission is complete.</p>
+<p>The data receiving module on the server side receives the data packet sent by the detection module, and stores it in the database after parsing. Investigators can access the website at any terminal to monitor the Wi-Fi detection data in real-time. After the investigation experiment is completed, the investigators can perform data calculations on the web page, and calculate the OD matrices of the bus route based on the manual survey results and Wi-Fi detection data.</p>
+<h3 id="2-2-Hardware-system"><a href="#2-2-Hardware-system" class="headerlink" title="2.2 Hardware system"></a>2.2 Hardware system</h3><p>In the IEEE 802.11 communication protocol, a device needs to be “discovered” by the network before it is connected to a Wi-Fi access point. Probe request management frames are designed to solve the “discovery” problem of access points. When mobile devices are not connected to the access point, mobile devices with Wi-Fi enabled will periodically send probe request frames to actively discover nearby access points. Within the detection range of the Wi-Fi sensor, the Wi-Fi sensor can receive a probe request from a Wi-Fi device in monitor mode and extracts the device’s MAC address. By continuously detecting the probe request frames of the mobile device in the bus, and uploading the collected detection data to the database of the server, real-time detection of the mobile device can be achieved.</p>
+<p>The hardware of the data collection system consists of three parts, including Wi-Fi sensors, mobile power bank, and mobile network connections. Figure 2 shows the composition of the hardware of the data collection system.</p>
+<img title="The composition of the hardware of the data collection system" data-src="/2020/02/12/WiFi-detect-OD-estimation/The%20composition%20of%20the%20hardware%20of%20the%20data%20collection%20system.png">
+<center>Figure 2  The composition of the hardware of the data collection system</center>
+
+<p>The Wi-Fi sensor uploads the detected Wi-Fi signal data at a fixed period, and the detection range is about 50 meters. Wi-Fi sensors can collect the following data: source MAC address, destination MAC address and signal strength (RSSI). Source MAC address is the MAC address of the detected device. Destination MAC address is the MAC address of the device to which the packet was sent. Mobile network access points provide network connectivity for data uploads. Power bank provides power for Wi-Fi sensor’s run.</p>
+<div class="note default">
+            <h2 id="3-Methodologies"><a href="#3-Methodologies" class="headerlink" title="3. Methodologies"></a>3. Methodologies</h2>
+          </div>
+<h3 id="3-1-Data-filtering"><a href="#3-1-Data-filtering" class="headerlink" title="3.1 Data filtering"></a>3.1 Data filtering</h3><p>Since the detected signal data may come from pedestrians, vehicles, and buildings outside the bus, it is necessary to filter the data of the devices outside the bus. Some studies have tried using data pre-processing steps to reduce noise data (<em>5</em>). In this study, from the perspective of the duration of the device detection, it can be considered that the device with a short detection duration may be a device that was briefly detected outside the bus. Therefore, the detection duration is selected as a parameter for filtering signal data. Let T represent the duration of the device detection and <script type="math/tex">T_{\min }</script> represents the minimum duration. MAC address data with device detection duration less than $T_{\min }$ will be removed:</p>
+<center>$$T&gt;T_{\min }$$</center>
+
+<p>From the perspective of the distance between the device and the sensor, it considers that devices with long distances do not exist in the bus, so the average signal strength is selected as a parameter to filter the signal data. Use <script type="math/tex">S_{\average}</script> to represent the average signal strength of the device, <script type="math/tex">S_{\min}</script> to represent the minimum average signal strength, and the detection device data with the average signal strength less than <script type="math/tex">S_{\min}</script> will be filtered:</p>
+<center>$$
+S_{\text {average}}&gt;S_{\min }
+$$</center>
+
+<h3 id="3-2-Wi-Fi-device-OD-inference-based-on-time-matching"><a href="#3-2-Wi-Fi-device-OD-inference-based-on-time-matching" class="headerlink" title="3.2 Wi-Fi device OD inference based on time matching"></a>3.2 Wi-Fi device OD inference based on time matching</h3><p>For the inference of the boarding stop of the device, find the stop where the arrival stop time closest to the device’s first detect timestamp, and earlier than the first detect timestamp. For the inference of the alighting stop of the device, find the stop where the arrival stop time closest to the device’s last detect timestamp, and later than the last detect timestamp. The inference process of the boarding and alighting stop of the detection devices is shown in Figure 3.</p>
+<img title="The inference process of the boarding and alighting stop of the detected devices" data-src="/2020/02/12/WiFi-detect-OD-estimation/The%20inference%20process%20of%20the%20boarding%20and%20alighting%20stop%20of%20the%20detected%20devices.png">
+<center>Figure 3   The inference process of the boarding and alighting stop of the detected devices</center>
+
+<p>The OD matrix estimation steps of Wi-Fi devices are as follows:</p>
+<p><strong>Step1</strong>: Infer the boarding stop of the device. Compare the arrival time of each stop in sequence with the time when the device was first detected, and find the first stop whose arrival time is greater than the first detection time. The previous stop at this stop is considered to be the boarding stop of the device. boarding stop is given by:</p>
+<center>$$
+\left.\begin{array}{rl}
+{t_{m}-t_{\text {firstbetect}}} &amp; {=\min \left(t_{x}-t_{\text {firstDetect}}\right)} \\
+{\text {s.t.}\left\{\begin{array}{l}
+{t_{x}-t_{\text {firstDetect}}&gt;0} \\
+{x \in(1, \cdots, k)}
+\end{array}\right.}
+\end{array}\right\} \Rightarrow S_{\text {boarding}}=S_{m-1}
+$$</center>
+
+<p>Where <script type="math/tex">S_{boarding}</script> represents the boarding stop, <script type="math/tex">t_{firstDetect}</script> represents the first detection time, <script type="math/tex">t_{x}</script> represents the arrival time of the x stop, and k represents the stop number.</p>
+<p><strong>Step2</strong>: Infer the alighting stop of the device. Compare the arrival time of each stop in sequence with the last time the device was detected, and find the first stop whose arrival time is greater than the last detection time. Consider this stop as the alighting stop for the device. the alighting stop is given by:</p>
+<center>$$
+\left.\begin{array}{rl}
+{t_{n}-t_{\text {lastDetect}}} &amp; {=\min \left(t_{x}-t_{\text {lastDetect}}\right)} \\
+{s . t .\left\{\begin{array}{l}
+{t_{x}-t_{\text {lastDetect}}&gt;0} \\
+{x \in(1, \cdots, k)}
+\end{array}\right.}
+\end{array}\right\} \Rightarrow S_{\text {alighting}}=S_{n}
+$$</center>
+
+<p>Where <script type="math/tex">S_{alighting}</script> represents the alighting stop, and <script type="math/tex">t_{lastDetect}</script> represents the last detection time.</p>
+<p><strong>Step3</strong>: Accumulate the number of devices in Wi-Fi device OD matrix according to the inferred corresponding positions of the boarding and alighting stop:</p>
+<center>$$
+Q\left(S_{\text {boarding}}, S_{\text {aligiting}}\right)=Q\left(S_{\text {boarding}}, S_{\text {aligiting}}\right)+1
+$$</center>
+
+<p>where <script type="math/tex">Q(S_{boarding},S_{alighting})</script> represents the number of devices which boarded at <script type="math/tex">S_{boarding}</script> and got off at <script type="math/tex">S_{alighting}</script>.</p>
+<p>Repeat steps 1 to 3 until the data inference for all devices is complete. The Wi-Fi device OD matrix based on time matching can be obtained as shown in Table 1:</p>
+<center>Table 1  The Wi-Fi device OD matrix based on time matching</center>
+
+<img title="The Wi-Fi device OD matrix based on time matching" data-src="/2020/02/12/WiFi-detect-OD-estimation/The%20Wi-Fi%20device%20OD%20matrix%20based%20on%20time%20matching.jpg">
+<p>where <script type="math/tex">B(i)</script> represents the number of detection devices originating from stop i, and <script type="math/tex">A(j)</script> represents the number of detection devices alighting at stop j.</p>
+<p>And the bus load L(x) is given by:</p>
+<center>$$
+\begin{aligned}
+L(x)=&amp; L(x-1)+B(x)-A(x) \\
+&amp; x \in(2, \ldots, k-1)
+\end{aligned}
+$$</center>
+
+<p>where L(x) represents the bus load from stop x to stop x+1, and L(1)=B(1).</p>
+<h3 id="3-3-Actual-OD-estimation"><a href="#3-3-Actual-OD-estimation" class="headerlink" title="3.3 Actual OD estimation"></a>3.3 Actual OD estimation</h3><p>In order to estimate the actual OD matrix using the Wi-Fi detection OD matrix, according to the method proposed by Ben-Akiva (<em>10</em>), a Maximum Likelihood Estimator (MLE) method is proposed in this paper. The following are assumptions for maximum likelihood estimation:</p>
+<p>(1) Passengers arrive individually and according to a Poisson process.</p>
+<p>(2) There is negligible bias in Wi-Fi OD matrices data.</p>
+<p>(3) The boarding and alighting counts are independent of each other.</p>
+<p>Assumptions (1) to (3) are considered reasonable in most cases (<em>11</em>). In this study, we usually use a Wi-Fi OD matrix and the boarding and alighting counts for MLE.</p>
+<p>As the MLE, the mean value of this Poisson process is the detected arrival rate for OD pair i,j: $$<br>\lambda<em>{i j} p</em>{i j}</p>
+<script type="math/tex; mode=display">
+
+<center></script><p>P\left(Q(i, j) | \lambda<em>{i j}, p</em>{i j}\right)=e^{-\lambda<em>{i j} p</em>{i j}} \frac{\left(\lambda<em>{i j} p</em>{i j}\right)^{Q(i, j)}}{Q(i, j) !}</p>
+<script type="math/tex; mode=display"></center>
+
+Where $$lambda_{ij}$$ is the mean value of the Poisson process for passenger arrivals with origin i and destination j, and $$p_{ij}$$ is the percentage of passenger flows from i to j detected by the Wi-Fi sensor.
+
+The total probability or likelihood of observing all the data is:
+
+<center></script><p>L(Q(i, j))=\prod<em>{i} \prod</em>{j} e^{-\lambda<em>{i j} p</em>{i j}} \frac{\left(\lambda<em>{i j} p</em>{i j}\right)^{Q(i, j)}}{Q(i, j) !}</p>
+<script type="math/tex; mode=display"></center>
+
+Taking the natural log on both sides:
+
+<center></script><p>\ln L(Q(i, j))=\sum<em>{i} \sum</em>{i}\left(-\lambda<em>{i j} p</em>{i j}+Q(i, j) \ln \lambda<em>{i j} p</em>{i j}\right)+C</p>
+<script type="math/tex; mode=display"></center>
+
+Where C is a constant. Since $$p_{ij}$$ is also unknown, it is impossible to estimate $$lambda_{ij}$$ and $$p_{ij}$$ at the same time. By assuming that the detect rate $$p_{ij}$$ is dependent on the origin and destination stop, as the study (*10*) proposes, we can replace $$p_{ij}$$ by</script><p>p<em>{i} * p</em>{j}$$:</p>
+<center>$$
+\ln L(Q(i, j))=\sum_{i} \sum_{j}\left(-\lambda_{i j} p_{i} p_{j}+Q(i, j) \ln \lambda_{i j} p_{i} p_{j}\right)+c
+$$</center>
+
+<p>To solve for $$<br>\max <em>{\lambda</em>{i j}} \ln L(Q(i, j))</p>
+<script type="math/tex; mode=display">, we can take derivatives on both sides over $$lambda_{ij}$$, and set the derivatives to zero, and solve the resulting equation:
+
+<center></script><p>\frac{\partial \ln L(Q(i, j))}{\partial \lambda<em>{i j}}=-p</em>{i} p<em>{j}+\frac{Q(i, j)}{\lambda</em>{i j}}=0, \forall i, j</p>
+<script type="math/tex; mode=display"></center>
+
+Therefore, the maximum likelihood estimates for $$lambda_{ij} $$is:
+
+<center></script><p>\widetilde{\lambda<em>{i j}}=\frac{Q(i, j)}{p</em>{i} p_{j}}, \forall i, j</p>
+<script type="math/tex; mode=display"></center>
+
+Where $$\widetilde{\lambda_{i j}}$$ is the value of maximum likelihood estimates for each OD pair.
+
+<div class="note default">
+            <h2 id="4-Empirical-evaluation"><a href="#4-Empirical-evaluation" class="headerlink" title="4. Empirical evaluation"></a>4. Empirical evaluation</h2>
+          </div>
+
+### 4.1 Experiment design
+
+As shown in Figure 4, this paper selected the Dalian 101 bus route for evaluation. The bus route runs from Malan Square in the west to Dalian Railway Station in the east and has 11 stops. The direction of the route investigated in this study is from Malan Square to Dalian Railway Station.
+
+<img src="/2020/02/12/WiFi-detect-OD-estimation/Survey%20route%20route%20101.png" title="Survey route route 101">
+
+<center>Figure 4  Survey route: route 101</center>
+
+The survey was conducted from April 8 to April 13, 2019, including weekdays and weekends. The survey period includes four periods of 7: 00-8: 00, 8: 00-9: 00, 16: 00-17: 00, and 17: 00-18: 00. The survey data includes Wi-Fi signal data and boarding and alighting counts at each stop. The on-board survey includes the number of passengers boarding and alighting the bus at each stop, the arrival time and the departure time of each stop. A total of 10,517 Wi-Fi signals were detected from 686 mobile devices.
+
+### 4.2  Data cleaning
+
+The detection range of the Wi-Fi sensor is about 50 meters. When the sensor is installed in the bus, the Wi-Fi signal outside the bus is inevitably detected. In this study, the minimum duration and minimum average signal strength were designed as filtering parameters. The procedure for determining parameter values is as follows:
+
+*Step1*: Determine a set of parameters according to 10%(40s), 20%(80s), 30%(120s) of the cumulative frequency of the device detection duration and 10%(-94dBm), 20%(-93dBm), 30%(-92dBm) of the cumulative frequency of the average signal strength respectively, and combine them to get 9 filtering parameter pairs as the table 2 shows, use these parameters to filter the data.
+
+*Step2*: Find the minimum value of the variance of the ratio of the detected Bus load to the actual bus load, and its corresponding filtering parameter value is considered have the most stable filtering effect, which is the optimal filtering parameter value.
+
+*Step3*: Count the optimal filtering parameter values of each trip dataset, and determine the value of the filtering parameter as the parameter pair that has become the optimal filtering parameter most times.
+According to the above steps, 9 sets of candidate parameters are determined to filter the 10 trip datasets, and the number of times that these 9 parameter pairs become the optimal filtering parameters is counted, as present in Table 2.
+
+<center>Table 2  Statistics of optimal filtering parameters</center>
+
+<img src="/2020/02/12/WiFi-detect-OD-estimation/Statistics%20of%20optimal%20filtering%20parameters.png" title="Statistics of optimal filtering parameters">
+
+From the statistical results in the table above, the minimum detection duration and minimum average signal strength were determined to be 120 seconds and -92 dBm, respectively.
+
+### 4.3 Performance metrics
+
+The objective of this paper is to obtain a good OD matrix estimation based on the OD matrix of Wi-Fi devices. Due to the labor-intensive and time-consuming investigation of the actual OD matrix, we cannot directly obtain ground truth OD data for measurement. The bus load is calculated by summing each row and column of the estimated OD, and the accuracy of the estimated OD can be evaluated by comparing the estimated bus load with the actual bus load. The evaluation metrics of bus load uses the average bus load difference G, G is given by:
+
+<center></script><p>G=\frac{1}{K} \sum<em>{k} \frac{\sum</em>{n}\left|\widetitle{B L<em>{k}(n)}-B L</em>{k}(n)\right|}{N}</p>
+<script type="math/tex; mode=display"></center>
+
+where</script><p>\widehat{B L}_{k}(n)</p>
+<script type="math/tex; mode=display">represents the estimated bus load between stop n and stop n+1 in trip k, and $${B L}_{k}(n)$$ represents the actual bus loads between stop n and stop n+1. The higher G is, the lower the estimation accuracy is.
+
+### 4.4 Estimate result
+
+In this part, we compare the performance of the MLE and a proportional fitting (PF) method in terms of bus load of each trip. For comparison, a simple, easy-to-implement proportional fitting (PF) method is also used for evaluation. For each cell of the base matrix multiplied by the proportion of actual to detected boarding counts, the actual OD flow matrix E(i,j) is given by:
+
+<center></script><p>E(i, j)=B<em>{t}(i) \times \frac{Q(i, j)}{\sum</em>{k} Q(i, k)}</p>
+<script type="math/tex; mode=display"></center>
+
+where</script><p>B_{t}(i)</p>
+<p>$$ represents the count of passengers boarding at the stop i.</p>
+<p>“Structural zero” problem (<em>10</em>) occurred when using the PF method to calculate. The problem is that at a given stop, the number of detected devices boarding the bus is zero, but the number of passengers boarding the bus is not zero, which results in the updated value of OD pairs boarding from this stop still be zero. In this paper, solve this problem by changing the “0” cells of the base matrix to “1”.</p>
+<p>Figure 5 shows the estimated and true bus load profiles for each bus trip. Trip1, 3, 5, 7, 9, and 11 are the survey results in the morning (7: 00-8: 00), while trip2, 4, 6, 8, 10, and 12 are the afternoon (16: 00-17: 00) results. For the former, the maximum segments of the bus load are between stop 5 and stop 7, and for the latter, there are two maximum segments that stop 4 to stop 6(for trip 2,6,10) and stop 6 to stop 8(for trip 4,8,12). Obviously, the variation of passenger demand for different periods leads to large trip-level demand variation. In addition, variations in land use near the stop also lead to variations in passenger demand. For example, the sixth stop is Xi’an road stop. It is near a large commercial center with a large number of commuters, so the bus load before the sixth stop in the morning peak is high. Trip 1 to 8 are weekday survey data and trips 9 to 12 are weekend survey data. The survey data has different passengers’ demands on different dates, also leading to the variation of bus load.</p>
+<img title="Estimated and ground truth of bus load" data-src="/2020/02/12/WiFi-detect-OD-estimation/Estimated%20and%20ground%20truth%20of%20bus%20load.png">
+<center>Figure 5  Estimated and ground truth of bus load</center>
+
+<p>As shown in figure 5, the bus load estimated by the MLE method shows a relatively higher degree of similarity with the corresponding true ones. Therefore, the MLE method can be used to estimate the OD flow with a certain accuracy. As a comparison, the simple PF method may have poor bus load estimates on some bus trips, such as trips 5 and 9.</p>
+<p>In order to quantify the estimation error, we statistics the distribution of the estimated bus load error. Figure 6 presents the fitting probability density functions (PDFs) of the estimated error for the MLE and the PF method. Positive error represents the load is overestimated.</p>
+<img title="Estimated bus load error distribution" data-src="/2020/02/12/WiFi-detect-OD-estimation/Estimated%20bus%20load%20error%20distribution.png">
+<center>Figure 6  Estimated bus load error distribution</center>
+
+<p>Figure 6 reveals that the MLE method provides better bus load estimates than the PF method. In the figure 6, estimates errors of the MLE method are distributed around “0” mostly, while estimates errors are concentrated around “3” for the PF method. In general, the average absolute error value G is equal to 3.83 for the MLE and 4.96 for the PF. The PF method tends to overestimate the bus load. The PF method has estimation errors that might due to the proportion of passengers boarding at a given stop carrying a Wi-Fi device is not constant.</p>
+<p>Figure 7 shows the cumulative density functions (CDFs) of the error for the two algorithms base on 12 trips. The figure indicates the MLE method outperforms the PF method. For instance, for about 80% of the bus loads, the MLE method leads to an error lower than 6. For the PF method, the error is lower than 6 only about 67% of the loads. Therefore, MLE can provide a more accurate estimation of the bus load.</p>
+<img title="CDF of the bus load error" data-src="/2020/02/12/WiFi-detect-OD-estimation/CDF%20of%20the%20bus%20load%20error.png">
+<center>Figure 7  CDF of the bus load error</center>
+
+<div class="note default">
+            <h2 id="5-Conclusion-and-future-work"><a href="#5-Conclusion-and-future-work" class="headerlink" title="5. Conclusion and future work"></a>5. Conclusion and future work</h2>
+          </div>
+<h3 id="5-1-Conclusion"><a href="#5-1-Conclusion" class="headerlink" title="5.1 Conclusion"></a>5.1 Conclusion</h3><p>The bus is an important part of the urban public transportation system, and the OD flow data of bus passengers is the basic data for bus operation management and planning. This paper studies the estimation of bus OD matrices based on Wi-Fi signal data. The data collection system built in this paper is divided into two parts, including the hardware system and the data analysis website. The process of collecting, storing, and calculating Wi-Fi data and manual survey data is integrated into the website(www.djtubustool.com), improving the efficiency of conducting survey experiments. And the website is available for anyone who wants to repeat the work in this paper. A method estimating the OD matrices of Wi-Fi devices based on time matching and a Maximum Likelihood Estimator (MLE) method for the actual OD flow matrices estimation are proposed. Data filtering methods based on minimum detection duration threshold and minimum average signal strength threshold are also proposed. According to the empirical evaluation, the MLE method can provide good trip-level OD matrices estimation with the average bus load error is 3.83.</p>
+<h3 id="5-2-Future-work"><a href="#5-2-Future-work" class="headerlink" title="5.2 Future work"></a>5.2 Future work</h3><p>Future research needs to determine the uncertainty of the ratio of the detected OD flow to the actual OD flow to improve the accuracy of the estimation. MAC address randomization technology enables a device to transmit multiple MAC addresses. Future research needs to address the identification challenges brought by MAC address randomization.</p>
+<div class="note success">
+            <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>  这个篇文章是对大学本科大创、毕设的总结，在2020年这个不平凡的寒假画上了句号，未来还有更多挑战等待着去完成，加油！</p>
+          </div>
+<div class="note default">
+            <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2>
+          </div>
+<ol>
+<li>Ceder, A. (2016). Public transit planning and operation: Modeling, practice and behavior.</li>
+<li>Ji, Y., Mishalani, R. G., &amp; McCord, M. R. (2015). Transit passenger origin–destination flow estimation: Efficiently combining onboard survey and large automatic passenger count datasets. Transportation Research Part C: Emerging Technologies, 58, 178-192.</li>
+<li>Mishalani, R. G., McCord, M. R., &amp; Reinhold, T. (2016). Use of Mobile Device Wireless Signals to Determine Transit Route-Level Passenger Origin–Destination Flows: Methodology and Empirical Evaluation. Transportation Research Record, 2544(1), 123-130.</li>
+<li>Cisco, V. N. I. (2019). Cisco Visual Networking Index: Forecast and Trends, 2017–2022 White Paper. Porto Salvo, Lisboa. Disponível em:&lt; www. cisco. com/c/pt_pt/about/press/news-archive-2018/20181127. html&gt;, Acesso em, 17.</li>
+<li>Mikkelsen, L., Buchakchiev, R., Madsen, T., &amp; Schwefel, H. P. (2016, September). Public transport occupancy estimation using WLAN probing. In 2016 8th International Workshop on Resilient Networks Design and Modeling (RNDM) (pp. 302-308). IEEE.</li>
+<li>Afshari, H. H., Jalali, S., Ghods, A. H., &amp; Raahemi, B. (2018, November). An Intelligent Traffic Management System Based on the Wi-Fi and Bluetooth Sensing and Data Clustering. In Proceedings of the Future Technologies Conference (pp. 298-312). Springer, Cham.</li>
+<li>Oransirikul, T., Piumarta, I., &amp; Takada, H. (2019). Classifying Passenger and Non-passenger Signals in Public Transportation by Analysing Mobile Device Wi-Fi Activity. Journal of Information Processing, 27, 25-32.</li>
+<li>Ji, Y., Zhao, J., Zhang, Z., &amp; Du, Y. (2017). Estimating bus loads and OD flows using location-stamped farebox and Wi-Fi signal data. Journal of Advanced Transportation, 2017.</li>
+<li>Håkegård, J. E., Myrvoll, T. A., &amp; Skoglund, T. R. (2018, November). Statistical modelling for estimation of OD matrices for public transport using Wi-Fi and APC data. In 2018 21st International Conference on Intelligent Transportation Systems (ITSC) (pp. 1005-1010). IEEE.</li>
+<li>Ben-Akiva, M., Macke, P. P., &amp; Hsu, P. S. (1985). Alternative methods to estimate route-level trip tables and expand on-board surveys. Transportation Research Record, (1037).</li>
+<li>Cui, A. (2006). Bus passenger origin-destination matrix estimation using automated data collection systems (Doctoral dissertation, Massachusetts Institute of Technology).</li>
+</ol>
+<center>留言区欢迎任何的建议与批评<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f4a1.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a1.png?v8">💡</span>~</center>
+<center>如果你觉得这篇文章对你有用，欢迎分享、打赏哦<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/2615.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/2615.png?v8">☕</span>~</center><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </div>
+
+    
+    
+    
+      
+<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+        
+      
+        <div class="reward-container">
+  <div></div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="CaoXu 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="CaoXu 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>CaoXu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://www.caoxu.club/2020/02/12/WiFi-detect-OD-estimation/" title="基于Wi-Fi数据的公交 Trip-level OD矩阵估计">http://www.caoxu.club/2020/02/12/WiFi-detect-OD-estimation/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Wi-Fi检测/" rel="tag"><i class="fa fa-tag"></i> Wi-Fi检测</a>
+            
+              <a href="/tags/OD矩阵估计/" rel="tag"><i class="fa fa-tag"></i> OD矩阵估计</a>
+            
+              <a href="/tags/极大似然估计法/" rel="tag"><i class="fa fa-tag"></i> 极大似然估计法</a>
+            
+              <a href="/tags/JSP/" rel="tag"><i class="fa fa-tag"></i> JSP</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/01/03/改进CNN识别Fashion-MINST/" rel="next" title="改进CNN识别Fashion-MINST">
+                  <i class="fa fa-chevron-left"></i> 改进CNN识别Fashion-MINST
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC80NzA3Ni8yMzU3Ng=="></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Data-collection-system"><span class="nav-text">2. Data collection system</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-System-design"><span class="nav-text">2.1 System design</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Hardware-system"><span class="nav-text">2.2 Hardware system</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Methodologies"><span class="nav-text">3. Methodologies</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Data-filtering"><span class="nav-text">3.1 Data filtering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Wi-Fi-device-OD-inference-based-on-time-matching"><span class="nav-text">3.2 Wi-Fi device OD inference based on time matching</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Actual-OD-estimation"><span class="nav-text">3.3 Actual OD estimation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Conclusion-and-future-work"><span class="nav-text">5. Conclusion and future work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Conclusion"><span class="nav-text">5.1 Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Future-work"><span class="nav-text">5.2 Future work</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-text">References</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/android-chrome-512x512.png"
+      alt="CaoXu">
+  <p class="site-author-name" itemprop="name">CaoXu</p>
+  <div class="site-description" itemprop="description">记录在技术学习道路上的点点滴滴，分享有趣的项目经验</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Nhby14dQ==" title="GitHub &rarr; https://github.com/cao-xu"><i class="fa fa-fw fa-github"></i>GitHub</span>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <span class="exturl" data-url="bWFpbHRvOnh1Y2FvMTEzMEAxNjMuY29t" title="E-Mail &rarr; mailto:xucao1130@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <span class="exturl" data-url="aHR0cHM6Ly93ZWliby5jb20vdS8yNjAwNDU3MzIx" title="Weibo &rarr; https://weibo.com/u/2600457321"><i class="fa fa-fw fa-weibo"></i>Weibo</span>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cHM6Ly9hcnRobGlhbnQuZ2l0aHViLmlv" title="https://arthliant.github.io">斜阳草树</span>
+        </li>
+      
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3d3dy56MTYzODgudG9w" title="http://www.z16388.top">崎径其镜</span>
+        </li>
+      
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cHM6Ly8wdG9wLmdpdGh1Yi5pbw==" title="https://0top.github.io">zerotop</span>
+        </li>
+      
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cHM6Ly9zZWFpaS1ibG9nLmNvbQ==" title="https://seaii-blog.com">Seaii's Blog</span>
+        </li>
+      
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CaoXu</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">59k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">54 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/pjax/pjax.min.js?v=0.2.8"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+
+<script src="/js/next-boot.js?v=7.4.1"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      element.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.4.1"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+    MathJax.Ajax.config.path['mhchem'] = '//cdn.jsdelivr.net/npm/mathjax-mhchem@3';
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        extensions: ['[mhchem]/mhchem.js'],
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+      
+        pbOptions.boxForm = "horizontal";
+      
+        pbOptions.position = "bottomCenter";
+      
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+  </script>
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+    </div>
+<script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
