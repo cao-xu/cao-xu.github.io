@@ -67,7 +67,7 @@
 <meta property="og:site_name" content="CaoXu&#39;s Blog">
 <meta property="og:description" content="武汉加油！中国加油！  2020年第一篇博客，首先来填坑。本项目搭建了Wi-Fi检测信息分析网站，介绍了基于Wi-Fi信号检测的公交OD估计方法。这是本科两个毕设（软件工程+交通工程）的结合。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-13T08:27:08.848Z">
+<meta property="og:updated_time" content="2020-02-13T08:43:48.073Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于Wi-Fi数据的公交 Trip-level OD矩阵估计">
 <meta name="twitter:description" content="武汉加油！中国加油！  2020年第一篇博客，首先来填坑。本项目搭建了Wi-Fi检测信息分析网站，介绍了基于Wi-Fi信号检测的公交OD估计方法。这是本科两个毕设（软件工程+交通工程）的结合。">
@@ -351,7 +351,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-13 16:27:08" itemprop="dateModified" datetime="2020-02-13T16:27:08+08:00">2020-02-13</time>
+                <time title="修改时间：2020-02-13 16:43:48" itemprop="dateModified" datetime="2020-02-13T16:43:48+08:00">2020-02-13</time>
               </span>
             
           
@@ -447,7 +447,7 @@
 <h3 id="3-1-Data-filtering"><a href="#3-1-Data-filtering" class="headerlink" title="3.1 Data filtering"></a>3.1 Data filtering</h3><p>Since the detected signal data may come from pedestrians, vehicles, and buildings outside the bus, it is necessary to filter the data of the devices outside the bus. Some studies have tried using data pre-processing steps to reduce noise data (<em>5</em>). In this study, from the perspective of the duration of the device detection, it can be considered that the device with a short detection duration may be a device that was briefly detected outside the bus. Therefore, the detection duration is selected as a parameter for filtering signal data. Let T represent the duration of the device detection and <script type="math/tex">T_{\min }</script> represents the minimum duration. MAC address data with device detection duration less than $T_{\min }$ will be removed:</p>
 <center>$$T&gt;T_{\min }$$</center>
 
-<p>From the perspective of the distance between the device and the sensor, it considers that devices with long distances do not exist in the bus, so the average signal strength is selected as a parameter to filter the signal data. Use <script type="math/tex">S_{\average}</script> to represent the average signal strength of the device, <script type="math/tex">S_{\min}</script> to represent the minimum average signal strength, and the detection device data with the average signal strength less than <script type="math/tex">S_{\min}</script> will be filtered:</p>
+<p>From the perspective of the distance between the device and the sensor, it considers that devices with long distances do not exist in the bus, so the average signal strength is selected as a parameter to filter the signal data. Use <script type="math/tex">S_{\text {average}}</script> to represent the average signal strength of the device, <script type="math/tex">S_{\min}</script> to represent the minimum average signal strength, and the detection device data with the average signal strength less than <script type="math/tex">S_{\min}</script> will be filtered:</p>
 <center>$$
 S_{\text {average}}&gt;S_{\min }
 $$</center>
@@ -506,92 +506,66 @@ $$</center>
 <p>(2) There is negligible bias in Wi-Fi OD matrices data.</p>
 <p>(3) The boarding and alighting counts are independent of each other.</p>
 <p>Assumptions (1) to (3) are considered reasonable in most cases (<em>11</em>). In this study, we usually use a Wi-Fi OD matrix and the boarding and alighting counts for MLE.</p>
-<p>As the MLE, the mean value of this Poisson process is the detected arrival rate for OD pair i,j: $$<br>\lambda<em>{i j} p</em>{i j}</p>
-<script type="math/tex; mode=display">
+<p>As the MLE, the mean value of this Poisson process is the detected arrival rate for OD pair i,j: <script type="math/tex">\lambda_{i j} p_{i j}</script></p>
+<center>$$
+P\left(Q(i, j) | \lambda_{i j}, p_{i j}\right)=e^{-\lambda_{i j} p_{i j}} \frac{\left(\lambda_{i j} p_{i j}\right)^{Q(i, j)}}{Q(i, j) !}
+$$</center>
 
-<center></script><p>P\left(Q(i, j) | \lambda<em>{i j}, p</em>{i j}\right)=e^{-\lambda<em>{i j} p</em>{i j}} \frac{\left(\lambda<em>{i j} p</em>{i j}\right)^{Q(i, j)}}{Q(i, j) !}</p>
-<script type="math/tex; mode=display"></center>
+<p>Where <script type="math/tex">lambda_{ij}</script> is the mean value of the Poisson process for passenger arrivals with origin i and destination j, and <script type="math/tex">p_{ij}</script> is the percentage of passenger flows from i to j detected by the Wi-Fi sensor.</p>
+<p>The total probability or likelihood of observing all the data is:</p>
+<center>$$
+L(Q(i, j))=\prod_{i} \prod_{j} e^{-\lambda_{i j} p_{i j}} \frac{\left(\lambda_{i j} p_{i j}\right)^{Q(i, j)}}{Q(i, j) !}
+$$</center>
 
-Where $$lambda_{ij}$$ is the mean value of the Poisson process for passenger arrivals with origin i and destination j, and $$p_{ij}$$ is the percentage of passenger flows from i to j detected by the Wi-Fi sensor.
+<p>Taking the natural log on both sides:</p>
+<center>$$
+\ln L(Q(i, j))=\sum_{i} \sum_{i}\left(-\lambda_{i j} p_{i j}+Q(i, j) \ln \lambda_{i j} p_{i j}\right)+C
+$$</center>
 
-The total probability or likelihood of observing all the data is:
-
-<center></script><p>L(Q(i, j))=\prod<em>{i} \prod</em>{j} e^{-\lambda<em>{i j} p</em>{i j}} \frac{\left(\lambda<em>{i j} p</em>{i j}\right)^{Q(i, j)}}{Q(i, j) !}</p>
-<script type="math/tex; mode=display"></center>
-
-Taking the natural log on both sides:
-
-<center></script><p>\ln L(Q(i, j))=\sum<em>{i} \sum</em>{i}\left(-\lambda<em>{i j} p</em>{i j}+Q(i, j) \ln \lambda<em>{i j} p</em>{i j}\right)+C</p>
-<script type="math/tex; mode=display"></center>
-
-Where C is a constant. Since $$p_{ij}$$ is also unknown, it is impossible to estimate $$lambda_{ij}$$ and $$p_{ij}$$ at the same time. By assuming that the detect rate $$p_{ij}$$ is dependent on the origin and destination stop, as the study (*10*) proposes, we can replace $$p_{ij}$$ by</script><p>p<em>{i} * p</em>{j}$$:</p>
+<p>Where C is a constant. Since <script type="math/tex">p_{ij}</script> is also unknown, it is impossible to estimate <script type="math/tex">lambda_{ij}</script> and <script type="math/tex">p_{ij}</script> at the same time. By assuming that the detect rate <script type="math/tex">p_{ij}</script> is dependent on the origin and destination stop, as the study (<em>10</em>) proposes, we can replace <script type="math/tex">p_{ij}</script> by <script type="math/tex">p_{i} * p_{j}</script>:</p>
 <center>$$
 \ln L(Q(i, j))=\sum_{i} \sum_{j}\left(-\lambda_{i j} p_{i} p_{j}+Q(i, j) \ln \lambda_{i j} p_{i} p_{j}\right)+c
 $$</center>
 
-<p>To solve for $$<br>\max <em>{\lambda</em>{i j}} \ln L(Q(i, j))</p>
-<script type="math/tex; mode=display">, we can take derivatives on both sides over $$lambda_{ij}$$, and set the derivatives to zero, and solve the resulting equation:
+<p>To solve for <script type="math/tex">\max _{\lambda_{i j}} \ln L(Q(i, j))</script>, we can take derivatives on both sides over <script type="math/tex">lambda_{ij}</script>, and set the derivatives to zero, and solve the resulting equation:</p>
+<center>$$
+\frac{\partial \ln L(Q(i, j))}{\partial \lambda_{i j}}=-p_{i} p_{j}+\frac{Q(i, j)}{\lambda_{i j}}=0, \forall i, j
+$$</center>
 
-<center></script><p>\frac{\partial \ln L(Q(i, j))}{\partial \lambda<em>{i j}}=-p</em>{i} p<em>{j}+\frac{Q(i, j)}{\lambda</em>{i j}}=0, \forall i, j</p>
-<script type="math/tex; mode=display"></center>
+<p>Therefore, the maximum likelihood estimates for <script type="math/tex">lambda_{ij}</script>is:</p>
+<center>$$
+\widetilde{\lambda_{i j}}=\frac{Q(i, j)}{p_{i} p_{j}}, \forall i, j
+$$</center>
 
-Therefore, the maximum likelihood estimates for $$lambda_{ij} $$is:
-
-<center></script><p>\widetilde{\lambda<em>{i j}}=\frac{Q(i, j)}{p</em>{i} p_{j}}, \forall i, j</p>
-<script type="math/tex; mode=display"></center>
-
-Where $$\widetilde{\lambda_{i j}}$$ is the value of maximum likelihood estimates for each OD pair.
-
+<p>Where <script type="math/tex">\widetilde{\lambda_{i j}}</script> is the value of maximum likelihood estimates for each OD pair.</p>
 <div class="note default">
             <h2 id="4-Empirical-evaluation"><a href="#4-Empirical-evaluation" class="headerlink" title="4. Empirical evaluation"></a>4. Empirical evaluation</h2>
           </div>
-
-### 4.1 Experiment design
-
-As shown in Figure 4, this paper selected the Dalian 101 bus route for evaluation. The bus route runs from Malan Square in the west to Dalian Railway Station in the east and has 11 stops. The direction of the route investigated in this study is from Malan Square to Dalian Railway Station.
-
-<img src="/2020/02/12/WiFi-detect-OD-estimation/Survey%20route%20route%20101.png" title="Survey route route 101">
-
+<h3 id="4-1-Experiment-design"><a href="#4-1-Experiment-design" class="headerlink" title="4.1 Experiment design"></a>4.1 Experiment design</h3><p>As shown in Figure 4, this paper selected the Dalian 101 bus route for evaluation. The bus route runs from Malan Square in the west to Dalian Railway Station in the east and has 11 stops. The direction of the route investigated in this study is from Malan Square to Dalian Railway Station.</p>
+<img title="Survey route route 101" data-src="/2020/02/12/WiFi-detect-OD-estimation/Survey%20route%20route%20101.png">
 <center>Figure 4  Survey route: route 101</center>
 
-The survey was conducted from April 8 to April 13, 2019, including weekdays and weekends. The survey period includes four periods of 7: 00-8: 00, 8: 00-9: 00, 16: 00-17: 00, and 17: 00-18: 00. The survey data includes Wi-Fi signal data and boarding and alighting counts at each stop. The on-board survey includes the number of passengers boarding and alighting the bus at each stop, the arrival time and the departure time of each stop. A total of 10,517 Wi-Fi signals were detected from 686 mobile devices.
-
-### 4.2  Data cleaning
-
-The detection range of the Wi-Fi sensor is about 50 meters. When the sensor is installed in the bus, the Wi-Fi signal outside the bus is inevitably detected. In this study, the minimum duration and minimum average signal strength were designed as filtering parameters. The procedure for determining parameter values is as follows:
-
-*Step1*: Determine a set of parameters according to 10%(40s), 20%(80s), 30%(120s) of the cumulative frequency of the device detection duration and 10%(-94dBm), 20%(-93dBm), 30%(-92dBm) of the cumulative frequency of the average signal strength respectively, and combine them to get 9 filtering parameter pairs as the table 2 shows, use these parameters to filter the data.
-
-*Step2*: Find the minimum value of the variance of the ratio of the detected Bus load to the actual bus load, and its corresponding filtering parameter value is considered have the most stable filtering effect, which is the optimal filtering parameter value.
-
-*Step3*: Count the optimal filtering parameter values of each trip dataset, and determine the value of the filtering parameter as the parameter pair that has become the optimal filtering parameter most times.
-According to the above steps, 9 sets of candidate parameters are determined to filter the 10 trip datasets, and the number of times that these 9 parameter pairs become the optimal filtering parameters is counted, as present in Table 2.
-
+<p>The survey was conducted from April 8 to April 13, 2019, including weekdays and weekends. The survey period includes four periods of 7: 00-8: 00, 8: 00-9: 00, 16: 00-17: 00, and 17: 00-18: 00. The survey data includes Wi-Fi signal data and boarding and alighting counts at each stop. The on-board survey includes the number of passengers boarding and alighting the bus at each stop, the arrival time and the departure time of each stop. A total of 10,517 Wi-Fi signals were detected from 686 mobile devices.</p>
+<h3 id="4-2-Data-cleaning"><a href="#4-2-Data-cleaning" class="headerlink" title="4.2  Data cleaning"></a>4.2  Data cleaning</h3><p>The detection range of the Wi-Fi sensor is about 50 meters. When the sensor is installed in the bus, the Wi-Fi signal outside the bus is inevitably detected. In this study, the minimum duration and minimum average signal strength were designed as filtering parameters. The procedure for determining parameter values is as follows:</p>
+<p><em>Step1</em>: Determine a set of parameters according to 10%(40s), 20%(80s), 30%(120s) of the cumulative frequency of the device detection duration and 10%(-94dBm), 20%(-93dBm), 30%(-92dBm) of the cumulative frequency of the average signal strength respectively, and combine them to get 9 filtering parameter pairs as the table 2 shows, use these parameters to filter the data.</p>
+<p><em>Step2</em>: Find the minimum value of the variance of the ratio of the detected Bus load to the actual bus load, and its corresponding filtering parameter value is considered have the most stable filtering effect, which is the optimal filtering parameter value.</p>
+<p><em>Step3</em>: Count the optimal filtering parameter values of each trip dataset, and determine the value of the filtering parameter as the parameter pair that has become the optimal filtering parameter most times.<br>According to the above steps, 9 sets of candidate parameters are determined to filter the 10 trip datasets, and the number of times that these 9 parameter pairs become the optimal filtering parameters is counted, as present in Table 2.</p>
 <center>Table 2  Statistics of optimal filtering parameters</center>
 
-<img src="/2020/02/12/WiFi-detect-OD-estimation/Statistics%20of%20optimal%20filtering%20parameters.png" title="Statistics of optimal filtering parameters">
+<img title="Statistics of optimal filtering parameters" data-src="/2020/02/12/WiFi-detect-OD-estimation/Statistics%20of%20optimal%20filtering%20parameters.png">
+<p>From the statistical results in the table above, the minimum detection duration and minimum average signal strength were determined to be 120 seconds and -92 dBm, respectively.</p>
+<h3 id="4-3-Performance-metrics"><a href="#4-3-Performance-metrics" class="headerlink" title="4.3 Performance metrics"></a>4.3 Performance metrics</h3><p>The objective of this paper is to obtain a good OD matrix estimation based on the OD matrix of Wi-Fi devices. Due to the labor-intensive and time-consuming investigation of the actual OD matrix, we cannot directly obtain ground truth OD data for measurement. The bus load is calculated by summing each row and column of the estimated OD, and the accuracy of the estimated OD can be evaluated by comparing the estimated bus load with the actual bus load. The evaluation metrics of bus load uses the average bus load difference G, G is given by:</p>
+<center>$$
+G=\frac{1}{K} \sum_{k} \frac{\sum_{n}\left|\widetilde{B L_{k}(n)}-B L_{k}(n)\right|}{N}
+$$</center>
 
-From the statistical results in the table above, the minimum detection duration and minimum average signal strength were determined to be 120 seconds and -92 dBm, respectively.
+<p>where <script type="math/tex">\widetilde{BL}_{k}(n)</script> represents the estimated bus load between stop n and stop n+1 in trip k, and <script type="math/tex">{B L}_{k}(n)</script> represents the actual bus loads between stop n and stop n+1. The higher G is, the lower the estimation accuracy is.</p>
+<h3 id="4-4-Estimate-result"><a href="#4-4-Estimate-result" class="headerlink" title="4.4 Estimate result"></a>4.4 Estimate result</h3><p>In this part, we compare the performance of the MLE and a proportional fitting (PF) method in terms of bus load of each trip. For comparison, a simple, easy-to-implement proportional fitting (PF) method is also used for evaluation. For each cell of the base matrix multiplied by the proportion of actual to detected boarding counts, the actual OD flow matrix E(i,j) is given by:</p>
+<center>$$
+E(i, j)=B_{t}(i) \times \frac{Q(i, j)}{\sum_{k} Q(i, k)}
+$$</center>
 
-### 4.3 Performance metrics
-
-The objective of this paper is to obtain a good OD matrix estimation based on the OD matrix of Wi-Fi devices. Due to the labor-intensive and time-consuming investigation of the actual OD matrix, we cannot directly obtain ground truth OD data for measurement. The bus load is calculated by summing each row and column of the estimated OD, and the accuracy of the estimated OD can be evaluated by comparing the estimated bus load with the actual bus load. The evaluation metrics of bus load uses the average bus load difference G, G is given by:
-
-<center></script><p>G=\frac{1}{K} \sum<em>{k} \frac{\sum</em>{n}\left|\widetitle{B L<em>{k}(n)}-B L</em>{k}(n)\right|}{N}</p>
-<script type="math/tex; mode=display"></center>
-
-where</script><p>\widehat{B L}_{k}(n)</p>
-<script type="math/tex; mode=display">represents the estimated bus load between stop n and stop n+1 in trip k, and $${B L}_{k}(n)$$ represents the actual bus loads between stop n and stop n+1. The higher G is, the lower the estimation accuracy is.
-
-### 4.4 Estimate result
-
-In this part, we compare the performance of the MLE and a proportional fitting (PF) method in terms of bus load of each trip. For comparison, a simple, easy-to-implement proportional fitting (PF) method is also used for evaluation. For each cell of the base matrix multiplied by the proportion of actual to detected boarding counts, the actual OD flow matrix E(i,j) is given by:
-
-<center></script><p>E(i, j)=B<em>{t}(i) \times \frac{Q(i, j)}{\sum</em>{k} Q(i, k)}</p>
-<script type="math/tex; mode=display"></center>
-
-where</script><p>B_{t}(i)</p>
-<p>$$ represents the count of passengers boarding at the stop i.</p>
+<p>where <script type="math/tex">B_{t}(i)</script> represents the count of passengers boarding at the stop i.</p>
 <p>“Structural zero” problem (<em>10</em>) occurred when using the PF method to calculate. The problem is that at a given stop, the number of detected devices boarding the bus is zero, but the number of passengers boarding the bus is not zero, which results in the updated value of OD pairs boarding from this stop still be zero. In this paper, solve this problem by changing the “0” cells of the base matrix to “1”.</p>
 <p>Figure 5 shows the estimated and true bus load profiles for each bus trip. Trip1, 3, 5, 7, 9, and 11 are the survey results in the morning (7: 00-8: 00), while trip2, 4, 6, 8, 10, and 12 are the afternoon (16: 00-17: 00) results. For the former, the maximum segments of the bus load are between stop 5 and stop 7, and for the latter, there are two maximum segments that stop 4 to stop 6(for trip 2,6,10) and stop 6 to stop 8(for trip 4,8,12). Obviously, the variation of passenger demand for different periods leads to large trip-level demand variation. In addition, variations in land use near the stop also lead to variations in passenger demand. For example, the sixth stop is Xi’an road stop. It is near a large commercial center with a large number of commuters, so the bus load before the sixth stop in the morning peak is high. Trip 1 to 8 are weekday survey data and trips 9 to 12 are weekend survey data. The survey data has different passengers’ demands on different dates, also leading to the variation of bus load.</p>
 <img title="Estimated and ground truth of bus load" data-src="/2020/02/12/WiFi-detect-OD-estimation/Estimated%20and%20ground%20truth%20of%20bus%20load.png">
@@ -791,7 +765,7 @@ where</script><p>B_{t}(i)</p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Data-collection-system"><span class="nav-text">2. Data collection system</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-System-design"><span class="nav-text">2.1 System design</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Hardware-system"><span class="nav-text">2.2 Hardware system</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Methodologies"><span class="nav-text">3. Methodologies</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Data-filtering"><span class="nav-text">3.1 Data filtering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Wi-Fi-device-OD-inference-based-on-time-matching"><span class="nav-text">3.2 Wi-Fi device OD inference based on time matching</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Actual-OD-estimation"><span class="nav-text">3.3 Actual OD estimation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Conclusion-and-future-work"><span class="nav-text">5. Conclusion and future work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Conclusion"><span class="nav-text">5.1 Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Future-work"><span class="nav-text">5.2 Future work</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-text">References</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Data-collection-system"><span class="nav-text">2. Data collection system</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-System-design"><span class="nav-text">2.1 System design</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Hardware-system"><span class="nav-text">2.2 Hardware system</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Methodologies"><span class="nav-text">3. Methodologies</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Data-filtering"><span class="nav-text">3.1 Data filtering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Wi-Fi-device-OD-inference-based-on-time-matching"><span class="nav-text">3.2 Wi-Fi device OD inference based on time matching</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Actual-OD-estimation"><span class="nav-text">3.3 Actual OD estimation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Empirical-evaluation"><span class="nav-text">4. Empirical evaluation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Experiment-design"><span class="nav-text">4.1 Experiment design</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Data-cleaning"><span class="nav-text">4.2  Data cleaning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Performance-metrics"><span class="nav-text">4.3 Performance metrics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Estimate-result"><span class="nav-text">4.4 Estimate result</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Conclusion-and-future-work"><span class="nav-text">5. Conclusion and future work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Conclusion"><span class="nav-text">5.1 Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Future-work"><span class="nav-text">5.2 Future work</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-text">References</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->
